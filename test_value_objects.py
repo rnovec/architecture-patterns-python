@@ -15,6 +15,16 @@ class Money(NamedTuple):
     currency: str
     value: int
 
+    def __add__(self, other):
+        if self.currency != other.currency:
+            raise ValueError
+        return Money(self.currency, self.value + other.value)
+
+    def __sub__(self, other):
+        if self.currency != other.currency:
+            raise ValueError
+        return Money(self.currency, self.value - other.value)
+
 
 Line = namedtuple("Line", ["sku", "qty"])
 
@@ -29,24 +39,24 @@ fiver = Money("gbp", 5)
 tenner = Money("gbp", 10)
 
 
-def can_add_money_values_for_the_same_currency():
+def test_can_add_money_values_for_the_same_currency():
     assert fiver + fiver == tenner
 
 
-def can_subtract_money_values():
+def test_can_subtract_money_values():
     assert tenner - fiver == fiver
 
 
-def adding_different_currencies_fails():
+def test_adding_different_currencies_fails():
     with pytest.raises(ValueError):
         Money("usd", 10) + Money("gbp", 10)
 
 
-def can_multiply_money_by_a_number():
+def test_can_multiply_money_by_a_number():
     assert fiver * 5 == Money("gbp", 25)
 
 
-def multiplying_two_money_values_is_an_error():
+def test_multiplying_two_money_values_is_an_error():
     with pytest.raises(TypeError):
         tenner * fiver
 
